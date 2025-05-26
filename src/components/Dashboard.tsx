@@ -131,15 +131,12 @@ export const Dashboard = () => {
         )}
 
         {/* Current Settings Bar */}
-        <Card padding={3} radius={2} shadow={1} tone="primary">
+        <Card radius={2} shadow={1} tone="caution" padding={4}>
           <Flex align="center" gap={2}>
-            <Text size={1} weight="medium">
-              Current Settings:
-            </Text>
-            <Text size={1}>Project ID:</Text>
-            <Code size={1}>{projectId}</Code>
-            <Text size={1}>Webhook ID:</Text>
-            <Code size={1}>{webhookId}</Code>
+            <Text size={2}>Project ID:</Text>
+            <Code size={2}>{projectId}</Code>
+            <Text size={2}>Webhook ID:</Text>
+            <Code size={2}>{webhookId}</Code>
           </Flex>
         </Card>
 

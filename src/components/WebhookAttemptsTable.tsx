@@ -27,16 +27,28 @@ const TableHeader = ({
   sortable?: boolean;
   sortDirection?: "asc" | "desc";
 }) => (
-  <Flex flex={1} padding={3} align="center">
-    <Text weight="semibold" size={1}>
-      {text}
-    </Text>
-    {sortable && (
-      <Box marginLeft={1}>
-        {sortDirection === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}
-      </Box>
-    )}
-  </Flex>
+  <th
+    style={{
+      flex: 1,
+      height: "42px",
+    }}
+  >
+    <Flex
+      align="center"
+      justify={
+        text === "Status" || text === "Response" ? "center" : "flex-start"
+      }
+    >
+      <Text weight="semibold" size={1}>
+        {text}
+      </Text>
+      {sortable && sortDirection === "asc" ? (
+        <ArrowUpIcon style={{ marginLeft: "4px" }} />
+      ) : (
+        <ArrowDownIcon style={{ marginLeft: "4px" }} />
+      )}
+    </Flex>
+  </th>
 );
 
 export const WebhookAttemptsTable = ({
@@ -51,103 +63,149 @@ export const WebhookAttemptsTable = ({
   }
 
   return (
-    <Card radius={2} shadow={1} style={{ overflowX: "auto" }}>
-      {/* Table Header */}
-      <Flex
-        style={{
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "var(--card-border-color)",
-        }}
-      >
-        <Box style={{ width: "40px" }} padding={3}>
-          <Text> </Text>
-        </Box>{" "}
-        {/* For expand icon */}
-        <TableHeader text="Message ID" sortable sortDirection="asc" />
-        <TableHeader text="First Attempt" sortable sortDirection="asc" />
-        <TableHeader text="Last Attempt" sortable sortDirection="desc" />
-        <TableHeader text="Attempts" sortable sortDirection="asc" />
-        <TableHeader text="Status" sortable sortDirection="asc" />
-        <TableHeader text="Issues" />
-      </Flex>
+    <Card radius={2} shadow={1}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        {/* Table Header */}
+        <thead
+          style={{
+            borderBottomWidth: "1px",
+            borderBottomStyle: "solid",
+            borderBottomColor: "var(--card-border-color)",
+          }}
+        >
+          <tr>
+            {/* For expand icon */}
+            <th style={{ width: "40px" }}> </th>{" "}
+            <TableHeader text="Message ID" sortable sortDirection="asc" />
+            <TableHeader text="First Attempt" sortable sortDirection="asc" />
+            <TableHeader text="Last Attempt" sortable sortDirection="desc" />
+            <TableHeader text="Attempts" sortable sortDirection="asc" />
+            <TableHeader text="Status" sortable sortDirection="asc" />
+            <TableHeader text="Response" sortable sortDirection="asc" />
+          </tr>
+        </thead>
 
-      {/* Table Rows */}
-      <Stack space={0}>
-        {" "}
-        {/* No space between rows, Card itself provides separation */}
-        {attemptsData.map((attempt, index) => (
-          <Card
-            key={index}
-            paddingY={0}
-            paddingX={0}
-            tone={attempt.status === "Failed" ? "critical" : "transparent"}
-            style={{
-              borderBottomWidth: index < attemptsData.length - 1 ? "1px" : "0",
-              borderBottomStyle: "solid",
-              borderBottomColor: "var(--card-border-color)",
-            }}
-          >
-            <Flex align="center">
-              <Flex
-                align="center"
-                justify="center"
-                style={{ width: "40px" }}
-                padding={3}
+        {/* Table Rows */}
+        <tbody>
+          {attemptsData.map((attempt, index) => (
+            <tr
+              key={attempt.messageId}
+              style={{
+                height: "48px",
+
+                borderBottomWidth:
+                  index < attemptsData.length - 1 ? "1px" : "0",
+                borderBottomStyle: "solid",
+                borderBottomColor: "var(--card-border-color)",
+              }}
+            >
+              {/* toggle */}
+              <td
+                style={{
+                  width: "40px",
+                  padding: "4px",
+                  textAlign: "center",
+                }}
               >
                 <Button mode="bleed" padding={1} icon={ChevronDownIcon} />
-              </Flex>
-              <Flex flex={1} padding={3} align="center">
-                <Text size={1} textOverflow="ellipsis">
-                  {attempt.messageId}
+              </td>
+
+              {/* message id */}
+              <td>
+                <Text size={1}>{attempt.messageId}</Text>
+              </td>
+
+              {/* first attempt */}
+              <td>
+                <Flex
+                  direction="column"
+                  align="flex-start"
+                  justify="center"
+                  gap={2}
+                >
+                  <Text size={1}>{attempt.firstAttempt}</Text>
+                  <Text size={1} muted>
+                    {attempt.firstAttemptRelative}
+                  </Text>
+                </Flex>
+              </td>
+
+              {/* last attempt */}
+              <td>
+                <Flex
+                  direction="column"
+                  align="flex-start"
+                  justify="center"
+                  gap={2}
+                >
+                  <Text size={1}>{attempt.lastAttempt}</Text>
+                  <Text size={1} muted>
+                    {attempt.lastAttemptRelative}
+                  </Text>
+                </Flex>
+              </td>
+
+              {/* attempts */}
+              <td>
+                <Text size={1} align={"center"}>
+                  {attempt.attempts}
                 </Text>
-              </Flex>
-              <Flex
-                flex={1}
-                padding={3}
-                direction="column"
-                align="flex-start"
-                justify="center"
+              </td>
+
+              {/* status */}
+              <td
+                style={{
+                  padding: "8px",
+                  textAlign: "center",
+                }}
               >
-                <Text size={1}>{attempt.firstAttempt}</Text>
-                <Text size={1} muted>
-                  {attempt.firstAttemptRelative}
-                </Text>
-              </Flex>
-              <Flex
-                flex={1}
-                padding={3}
-                direction="column"
-                align="flex-start"
-                justify="center"
-              >
-                <Text size={1}>{attempt.lastAttempt}</Text>
-                <Text size={1} muted>
-                  {attempt.lastAttemptRelative}
-                </Text>
-              </Flex>
-              <Flex flex={1} padding={3} align="center">
-                <Text size={1}>{attempt.attempts}</Text>
-              </Flex>
-              <Flex flex={1} padding={3} align="center">
                 <Badge
                   tone={attempt.status === "Success" ? "positive" : "critical"}
                   fontSize={1}
+                  padding={2}
+                  radius={2}
+                  style={{
+                    width: "48px",
+                    textAlign: "center",
+                    border:
+                      attempt.status === "Success"
+                        ? "1px solid var(--card-badge-positive-fg-color)"
+                        : "1px solid var(--card-badge-critical-fg-color)",
+                  }}
                 >
                   {attempt.status}
                 </Badge>
-              </Flex>
-              <Flex flex={1} padding={3} align="center">
+              </td>
+
+              {/* Response */}
+              <td
+                style={{
+                  textAlign: "center",
+                }}
+              >
                 {attempt.issue && (
-                  <Badge tone="critical" mode="outline" fontSize={1}>
+                  <Badge
+                    tone={
+                      attempt.status === "Success" ? "positive" : "critical"
+                    }
+                    fontSize={1}
+                    padding={2}
+                    radius={2}
+                    style={{
+                      border:
+                        attempt.status === "Success"
+                          ? "1px solid var(--card-badge-positive-fg-color)"
+                          : "1px solid var(--card-badge-critical-fg-color)",
+                    }}
+                  >
                     {attempt.issue}
                   </Badge>
                 )}
-              </Flex>
-            </Flex>
-          </Card>
-        ))}
-      </Stack>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Card>
   );
 };
