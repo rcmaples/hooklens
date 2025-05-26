@@ -15,6 +15,10 @@ import {
 import { SearchIcon, CogIcon, SyncIcon } from "@sanity/icons";
 import { WebhookAttemptsTable } from "./WebhookAttemptsTable";
 
+import { useState, useCallback } from "react";
+import { SettingsDialog } from "./SettingsDialog";
+import { useCurrentUser, useProjects } from "@sanity/sdk-react";
+
 // Placeholder data - this will eventually come from state managed by React Query
 const attemptsData = [
   {
@@ -70,15 +74,22 @@ const attemptsData = [
 ];
 
 export const Dashboard = () => {
-  //   const prefersDark = usePrefersDark();
-  //   const scheme = prefersDark ? "dark" : "light";
-  // In a real app, searchString and statusFilter would be state variables
-  // const [searchString, setSearchString] = useState('');
-  // const [statusFilter, setStatusFilter] = useState('all');
+  const [open, setOpen] = useState(false);
+  const onOpenSettings = useCallback(() => setOpen(true), []);
+  const closeSettingsDialog = useCallback(() => setOpen(false), []);
 
-  // Filtering logic would go here, using searchString and statusFilter
-  // For now, we pass all data
+  const user = useCurrentUser();
+  console.log("user:");
+  console.dir(user, { depth: null });
+
+  const projects = useProjects();
+  console.log("\nprojects:");
+  console.dir(projects, { depth: null });
+
   const filteredAttempts = attemptsData;
+
+  const webhookId = "hkURZGCTz08qhCed";
+  const projectId = projects?.[0]?.id || "hzao7xsp";
 
   return (
     <Card
@@ -101,10 +112,23 @@ export const Dashboard = () => {
             </Text>
           </Stack>
           <Flex gap={2}>
-            <Button icon={CogIcon} text="Settings" mode="bleed" />
+            <Button
+              icon={CogIcon}
+              text="Settings"
+              mode="bleed"
+              onClick={onOpenSettings}
+            />
             <Button icon={SyncIcon} text="Refresh Data" tone="primary" />
           </Flex>
         </Flex>
+
+        {open && (
+          <SettingsDialog
+            onClose={closeSettingsDialog}
+            webhookId={webhookId || ""}
+            projectId={projectId || ""}
+          />
+        )}
 
         {/* Current Settings Bar */}
         <Card padding={3} radius={2} shadow={1} tone="primary">
@@ -113,9 +137,9 @@ export const Dashboard = () => {
               Current Settings:
             </Text>
             <Text size={1}>Project ID:</Text>
-            <Code size={1}>hzao7xsp</Code>
+            <Code size={1}>{projectId}</Code>
             <Text size={1}>Webhook ID:</Text>
-            <Code size={1}>hkURZGCTz08qhCed</Code>
+            <Code size={1}>{webhookId}</Code>
           </Flex>
         </Card>
 
