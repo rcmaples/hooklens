@@ -44,13 +44,8 @@ export const Dashboard = () => {
   const onOpenSettings = useCallback(() => setOpen(true), []);
   const closeSettingsDialog = useCallback(() => setOpen(false), []);
 
-  const user = useCurrentUser();
-  console.log("user:");
-  console.dir(user, { depth: null });
-
+  // const user = useCurrentUser();
   const projects = useProjects();
-  console.log("\nprojects:");
-  console.dir(projects, { depth: null });
 
   // Load mock data on component mount
   useEffect(() => {
@@ -125,7 +120,7 @@ export const Dashboard = () => {
         paddingRight={2}
         paddingTop={4}
         style={{
-          // height: "100vh",
+          minHeight: "100vh",
           margin: "-8px",
         }}
       >
@@ -157,7 +152,7 @@ export const Dashboard = () => {
       paddingRight={2}
       paddingTop={4}
       style={{
-        // height: "100vh",
+        minHeight: "100vh",
         margin: "-8px",
       }}
     >
